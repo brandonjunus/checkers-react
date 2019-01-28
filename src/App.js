@@ -4,39 +4,33 @@ import styled from 'styled-components'
 const salmonRed = '#FFA07A'
 const dimGrey = '#696969'
 
+const Wrapper = styled.div`
+`
+
 const Board = styled.div`
-  border: solid goldenrod 10px;
-  /* display: flex; */
-  min-height: calc(100vh - 20px);
-  /* justify-content: center; */
-  /* align-items: center; */
-  margin: auto;
+  border: solid 5px goldenrod;
+  display: grid;
+  grid-template-columns: repeat(8, 100px);
+  justify-content: center;
 `
 
 const Cell = styled.div`
-  width: 100px;
-  height: 100px;
   border: solid;
+  height: 100px;
+  width: 100px;
   background-color: ${props => props.color};
-  /* display: inline-flex; */
 `
-
-const Row = styled.div`
-  display: flex;
-  /* min-width: 850px; */
-`
-
 
 class App extends Component {
   constructor(props){
     super(props)
     this.state = {
       board: [
-      ['___', 'RED', '___', 'RED', '___', 'RED', '___', 'RED'],
-      ['___', '___', 'RED', '___', 'RED', '___', 'RED', '___'],
+        ['___', 'RED', '___', 'RED', '___', 'RED', '___', 'RED'],
+      ['RED', '___', 'RED', '___', 'RED', '___', 'RED', '___'],
       ['___', 'RED', '___', 'RED', '___', 'RED', '___', 'RED'],
       ['___', '___', '___', '___', '___', '___', '___', '___'],
-      ['___', '___', '___', 'RED', '___', '___', '___', '___'],
+      ['___', '___', '___', '___', '___', '___', '___', '___'],
       ['BLACK', '___', 'BLACK', '___', 'BLACK', '___', 'BLACK', '___'],
       ['___', 'BLACK', '___', 'BLACK', '___', 'BLACK', '___', 'BLACK'],
       ['BLACK', '___', 'BLACK', '___', 'BLACK', '___', 'BLACK', '___'],
@@ -46,14 +40,14 @@ class App extends Component {
     previousMovesString: '',
     currentTurn: 'BLACK',
     inDoubleJump: false,
-    }
-
-    this.move = this.move.bind(this);
+  }
+  
+  this.move = this.move.bind(this);
   }
   
   validateMove(coordinates, jumpMove = false, rowi, coli){
     const { board, currentTurn } = this.state;
-
+    
     if (!jumpMove){
       return coordinates[0] < board.length && 
               coordinates[0] >= 0 && 
@@ -61,25 +55,25 @@ class App extends Component {
               coordinates[1] >= 0 &&
               board[coordinates[0]][coordinates[1]] !== 'RED' &&
               board[coordinates[0]][coordinates[1]] !== 'BLACK';
-    } else {
-      return coordinates[0] < board.length && 
+            } else {
+              return coordinates[0] < board.length && 
               coordinates[0] >= 0 && 
               coordinates[1] < board.length &&
               coordinates[1] >= 0 &&
               board[coordinates[0]][coordinates[1]] !== 'RED' &&
               board[coordinates[0]][coordinates[1]] !== 'BLACK' &&
               board[(coordinates[0] + rowi) / 2][(coordinates[1] + coli) / 2] === (currentTurn === 'RED' ? 'BLACK' : 'RED');
-    }
-  }
+            }
+          }
 
-  changeTurn(){
-    const { currentTurn, inDoubleJump } = this.state;
-    this.setState({
-      inDoubleJump: !inDoubleJump,
-      currentTurn: currentTurn === 'RED' ? 'BLACK' : 'RED'
-    }) 
+          changeTurn(){
+            const { currentTurn, inDoubleJump } = this.state;
+            this.setState({
+              inDoubleJump: !inDoubleJump,
+              currentTurn: currentTurn === 'RED' ? 'BLACK' : 'RED'
+            }) 
   }
-
+  
   move(rowi, coli) {
     const { board, previousPossibleMoves, currentTurn, previousSelection, previousMovesString } = this.state;
     let currentSelection;
@@ -88,7 +82,7 @@ class App extends Component {
     previousPossibleMoves.forEach(move => {
       board[move[0]][move[1]] = '___'
     })
-
+    
     // if current move is possibleMove, move previous selection to current selection
     if (previousMovesString.includes(JSON.stringify([rowi,coli]))) {
       
@@ -165,12 +159,11 @@ class App extends Component {
   render() {
     const { board, currentTurn } = this.state;
     return (
-      <div>
+      <Wrapper>
         <h1>Current Turn: {currentTurn}</h1>
         <Board className="App">
-          {board.map((row, rowi) => (
-            <Row key={rowi}>
-              {row.map((col, coli) => (
+          {board.map((row, rowi) => 
+            row.map((col, coli) => 
                 <Cell 
                 key={coli}
                 onClick={(e) => this.handleClick(e, rowi, coli)}
@@ -180,13 +173,58 @@ class App extends Component {
                   'WHITE'
                 }
                 >{col}</Cell>
-              ))}
-            </Row>
-          ))}
+              )
+            )}
         </Board>
-      </div>
+      </Wrapper>
     );
   }
 }
 
 export default App;
+
+// flexbox styles
+// const Board = styled.div`
+//   border: solid goldenrod 10px;
+//   /* display: flex; */
+//   min-height: calc(100vh - 20px);
+//   /* justify-content: center; */
+//   /* align-items: center; */
+//   margin: auto;
+// `
+
+// const Cell = styled.div`
+//   width: 100px;
+//   height: 100px;
+//   border: solid;
+//   background-color: ${props => props.color};
+//   /* display: inline-flex; */
+// `
+
+// const Cell = styled.div`
+//   width: 100px;
+//   height: 100px;
+//   border: solid;
+//   /* display: inline-flex; */
+// `
+
+// const Row = styled.div`
+//   display: flex;
+//   /* min-width: 850px; */
+// `
+// board with flexbox
+// {board.map((row, rowi) => (
+//   <Row key={rowi}>
+//     {row.map((col, coli) => (
+//       <Cell 
+//       key={coli}
+//       onClick={(e) => this.handleClick(e, rowi, coli)}
+//       color={board[rowi][coli] === 'RED' ? salmonRed :
+//         board[rowi][coli] === 'BLACK' ? dimGrey : 
+//         board[rowi][coli] === 'POSSIBLE_MOVE' ? 'RED' :
+//         'WHITE'
+//       }
+//       >{col}</Cell>
+//     ))}
+//   </Row>
+// ))}
